@@ -1,25 +1,11 @@
 package br.ufs.dcomp.ChatRabbitMQ;
-
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-
 public class Chat {
-
 	private static final Scanner scanner = new Scanner(System.in);
 	private static final String arrow = ">> ";
-	private String currentArrow;
-	
-	private Connection connection;	
+	private String currentArrow = arrow;
 	private Queue sendQueue;
-
-	public Connection getConnection() {
-		return connection;
-	}
 	
 	public Queue getSendQueue() {
 		return sendQueue;
@@ -29,7 +15,6 @@ public class Chat {
 		this.sendQueue = sendQueue;
 	}
 
-	
 	public String getCurrentArrow() {
 		return currentArrow;
 	}
@@ -38,56 +23,41 @@ public class Chat {
 		this.currentArrow = currentArrow;
 	}
 
-	public Chat(String username, String host, String name, String password) throws Exception {
+	public Chat(String username, CustomConnection customConnection) throws Exception {
 		this.currentArrow = Chat.arrow;
-		this.connection = connectionSetup(host, name, password);
-		this.setSendQueue(new Queue(username, connection));
+		this.setSendQueue(new Queue(username, customConnection.getConnection(), customConnection.getChannel()));
 	}
-	
+
 	private void init() throws Exception {
-//		System.out.print(currentArrow);
-		sendQueue.waitMessage();
-//		System.out.print(currentArrow);
+		System.out.print(currentArrow);
+		sendQueue.waitMessage(currentArrow);
 	}
-	
-	
-	/////
-	private Connection connectionSetup(String host, String name, String password) throws Exception {
-		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost(host); // IP da máquina virtual
-		factory.setUsername(name);
-		factory.setPassword(password);
-		factory.setVirtualHost("/");
-		return factory.newConnection();
-	}
-	
-	public String currentDate() {
-		ZoneId z = ZoneId.of("America/Sao_Paulo");
-		ZonedDateTime zdt = ZonedDateTime.now(z);
-		return DateTimeFormatter.ofPattern("(dd/MM/yyyy) 'às' HH:mm").format(zdt);
-	}
-	//////
-	
+
 	public static void main(String[] argv) throws Exception {
-		System.out.print("User: ");		
+		System.out.print("User: ");
 		String message = "";
 		String username = scanner.nextLine().trim();
+
+		CustomConnection custom = new CustomConnection("54.83.142.41", "juanbomfim22", "juanbomfim22");
 		
-		Chat chat = new Chat(username, "54.86.170.54", "juanbomfim22", "juanbomfim22");
+		Chat chat = new Chat(username, custom); 
 		chat.init();
 		
-		while (!message.equals("exit")) {
-			message = scanner.nextLine().trim();
+		while (true) {
+			message = scanner.nextLine().trim(); 
+			if (message.equals("exit")) break;
 			if (message.startsWith("@")) {
+				Queue queue = new Queue(message.replace("@", ""), custom.getConnection(), custom.getChannel());
 				chat.setCurrentArrow(message + Chat.arrow);
-				chat.setSendQueue(new Queue(message.replace("@", ""), chat.connection));
+				chat.setSendQueue(queue);
 			} else {
-				chat.sendQueue.sendMessage(message, chat.currentDate(), chat.sendQueue.getQueueName());
+				chat.sendQueue.sendMessage(message, chat.sendQueue.getQueueName());
 			}
 			System.out.print(chat.currentArrow);
 		}
-		chat.sendQueue.getChannel().close();
-		chat.sendQueue.getConnection().close();
+
+		custom.getChannel().close();
+		custom.getConnection().close();
 		scanner.close();
 	}
 }
