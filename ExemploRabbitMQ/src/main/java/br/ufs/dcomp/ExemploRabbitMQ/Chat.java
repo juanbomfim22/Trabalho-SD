@@ -45,10 +45,18 @@ public class Chat {
   public static void waitMessage(Channel channel,String queue_name )throws Exception{
     Consumer consumer = new DefaultConsumer(channel) {
       public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)  throws IOException {
-        String message = new String(body, "UTF-8");
+       MensagemProto.Mensagem contatoMensagem = MensagemProto.Mensagem.parseFrom(body);
+       String emissor = contatoMensagem.getEmissor();
+       String data = contatoMensagem.getData();
+       String hora = contatoMensagem.getHora();
+       String grupo = contatoMensagem.getGrupo();
+       MensagemProto.Conteudo conteudo = contatoMensagem.getConteudo();
+       byte[] corpoMensagem = conteudo.getCorpo().toByteArray();
+       String strMensagem= new String(corpoMensagem, "UTF-8");
+       /* String message = new String(body, "UTF-8");
         System.out.print("\033[2K"); // Erase line content 
         System.out.println("\r" + message);
-        System.out.print(arrow);
+        System.out.print(arrow);*/
       }
     };
                       //(queue-name, autoAck, consumer);    
@@ -62,6 +70,7 @@ public class Chat {
   public static void addUsertoGroup(Channel channel, String userQueue, String groupName)throws Exception {
     channel.queueBind(userQueue,groupName,"");
   }
+  
   /*
   public static void criaMensagemProto(){
     ContatoProto.Mensagem.Builder builderMensagem= ContatoProto.Mensagem.newBuilder();
@@ -76,6 +85,27 @@ public class Chat {
     ContatoProto.Conteudo.Builder bConteudo= ContatoProto.Conteudo.newBuilder();
     
   }*/
+  
+  public static byte[] createMensagemProto(String emissor, String data, String hora, String grupo, MensagemProto.Conteudo conteudo){
+    MensagemProto.Mensagem.Builder builderMensagem= MensagemProto.Mensagem.newBuilder();
+    builderMensagem.setEmissor(emissor);
+    builderMensagem.setData(data);
+    builderMensagem.setHora(hora);
+    builderMensagem.setGrupo(grupo);
+    builderMensagem.setConteudo(conteudo);
+    MensagemProto.Mensagem contatoMensagem= builderMensagem.build();
+    byte [] buffer = contatoMensagem.toByteArray(); //retorna a mensagem em bytes a ser enviada
+    
+  }
+  
+  public static MensagemProto.Conteudo createConteudoProto(String tipo, byte[] corpo, String nome){
+    MensagemProto.Conteudo.Builder bConteudo= MensagemProto.Conteudo.newBuilder();
+    bConteudo.setTipo(tipo);
+    bConteudo.setCorpo(corpo);
+    bConteudo.setNome(nome);
+    MensagemProto.Conteudo contatoConteudo = bConteudo.build();
+    return contatoConteudo;
+  }
 
   public static void main(String[] argv) throws Exception {
     Connection connection = connectionSetup("172.31.27.201","leticia","rabbit");
