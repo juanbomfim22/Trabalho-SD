@@ -5,7 +5,6 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.io.IOException;
-//import com.google.protobuf.util.JsonFormat;
 
 public class Chat {
   
@@ -52,11 +51,10 @@ public class Chat {
        String grupo = contatoMensagem.getGrupo();
        MensagemProto.Conteudo conteudo = contatoMensagem.getConteudo();
        byte[] corpoMensagem = conteudo.getCorpo().toByteArray();
-       String strMensagem= new String(corpoMensagem, "UTF-8");
-       /* String message = new String(body, "UTF-8");
+       String strMensagem= new String(corpoMensagem, "UTF-8"); // FORMATAR DISPLAY DE MENSAGEM
         System.out.print("\033[2K"); // Erase line content 
-        System.out.println("\r" + message);
-        System.out.print(arrow);*/
+        System.out.println("\r" + strMensagem);
+        System.out.print(arrow);
       }
     };
                       //(queue-name, autoAck, consumer);    
@@ -71,21 +69,6 @@ public class Chat {
     channel.queueBind(userQueue,groupName,"");
   }
   
-  /*
-  public static void criaMensagemProto(){
-    ContatoProto.Mensagem.Builder builderMensagem= ContatoProto.Mensagem.newBuilder();
-    builderMensagem.setEmissor();
-    builderMensagem.setData();
-    builderMensagem.setHora();
-    builderMensagem.setGrupo();
-    
-  }
-  
-  public static void criaConteudoProto(){
-    ContatoProto.Conteudo.Builder bConteudo= ContatoProto.Conteudo.newBuilder();
-    
-  }*/
-  
   public static byte[] createMensagemProto(String emissor, String data, String hora, String grupo, MensagemProto.Conteudo conteudo){
     MensagemProto.Mensagem.Builder builderMensagem= MensagemProto.Mensagem.newBuilder();
     builderMensagem.setEmissor(emissor);
@@ -95,20 +78,21 @@ public class Chat {
     builderMensagem.setConteudo(conteudo);
     MensagemProto.Mensagem contatoMensagem= builderMensagem.build();
     byte [] buffer = contatoMensagem.toByteArray(); //retorna a mensagem em bytes a ser enviada
+    return buffer;
     
   }
   
   public static MensagemProto.Conteudo createConteudoProto(String tipo, byte[] corpo, String nome){
     MensagemProto.Conteudo.Builder bConteudo= MensagemProto.Conteudo.newBuilder();
     bConteudo.setTipo(tipo);
-    bConteudo.setCorpo(corpo);
+    bConteudo.setCorpo( com.google.protobuf.ByteString.copyFrom(corpo));
     bConteudo.setNome(nome);
     MensagemProto.Conteudo contatoConteudo = bConteudo.build();
     return contatoConteudo;
   }
 
   public static void main(String[] argv) throws Exception {
-    Connection connection = connectionSetup("172.31.27.201","leticia","rabbit");
+    Connection connection = connectionSetup("34.236.150.185","leticia","rabbit");
     
     String user, current_queue, input, current_exchange="";
 
@@ -148,8 +132,9 @@ public class Chat {
       }
      
         String date = getDate();
-        String message = date + " " + user + " diz: " + input; 
-        channel.basicPublish(current_exchange, current_queue, null, message.getBytes("UTF-8"));
+        MensagemProto.Conteudo conteudo = createConteudoProto("text/plain", input.getBytes("UTF-8"),""); //mensagens sempre do tipo text/plain e sem nome
+        byte[] mensagemProto = createMensagemProto(user,date.split(" ")[0], date.split(" ")[2], current_exchange, conteudo);
+        channel.basicPublish(current_exchange, current_queue, null, mensagemProto);
         System.out.print(Chat.arrow);
     }
       channel.close();
@@ -160,3 +145,4 @@ public class Chat {
   }
 
 }
+
