@@ -71,6 +71,21 @@ public class Chat {
     channel.queueBind(userQueue,groupName,"");
   }
   
+  /*
+  public static void criaMensagemProto(){
+    ContatoProto.Mensagem.Builder builderMensagem= ContatoProto.Mensagem.newBuilder();
+    builderMensagem.setEmissor();
+    builderMensagem.setData();
+    builderMensagem.setHora();
+    builderMensagem.setGrupo();
+    
+  }
+  
+  public static void criaConteudoProto(){
+    ContatoProto.Conteudo.Builder bConteudo= ContatoProto.Conteudo.newBuilder();
+    
+  }*/
+  
   public static byte[] createMensagemProto(String emissor, String data, String hora, String grupo, MensagemProto.Conteudo conteudo){
     MensagemProto.Mensagem.Builder builderMensagem= MensagemProto.Mensagem.newBuilder();
     builderMensagem.setEmissor(emissor);
@@ -91,7 +106,6 @@ public class Chat {
     MensagemProto.Conteudo contatoConteudo = bConteudo.build();
     return contatoConteudo;
   }
-  
 
   public static void main(String[] argv) throws Exception {
     Connection connection = connectionSetup("172.31.27.201","leticia","rabbit");
