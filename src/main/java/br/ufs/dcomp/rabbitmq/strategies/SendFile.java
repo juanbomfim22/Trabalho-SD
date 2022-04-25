@@ -25,6 +25,7 @@ public class SendFile extends Thread implements ActionStrategy {
 		this.currentExchange = currentExchange;
 	}
 
+	// Esse run eh da Thread!
 	public void run() {
 		try {
 			FormattedDate date = new FormattedDate();

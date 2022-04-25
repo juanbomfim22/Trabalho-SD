@@ -15,7 +15,6 @@ import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
-import br.ufs.dcomp.rabbitmq.Demo;
 import br.ufs.dcomp.rabbitmq.Input;
 import br.ufs.dcomp.rabbitmq.proto.MensagemProto;
 import br.ufs.dcomp.rabbitmq.strategies.ActionStrategy;
@@ -31,27 +30,11 @@ public class Chat {
 	private String name;
 	private String password;
 
-	private static Map<String, Channel> channel = new HashMap<>();
+	private static Map<String, Channel> channels = new HashMap<>();
 	private static Connection connection;
 
-	private void channelSetup() throws IOException, Exception {
-		if (connection == null) {
-			ConnectionFactory factory = new ConnectionFactory();
-			factory.setHost(host); // IP da máquina virtual
-			factory.setUsername(name);
-			factory.setPassword(password);
-			factory.setVirtualHost("/");
-			connection = factory.newConnection();
-		}
-		channel.put("mensagens", connection.createChannel());
-		// channel.put("arquivos", connection.createChannel());
-
-		channel.get("mensagens").queueDeclare(username, false, false, false, null);
-		// channel.get("arquivos").queueDeclare(username, false, false, false, null);
-	}
-
 	public static Map<String, Channel> getChannel() {
-		return channel;
+		return channels;
 	}
 
 	public static Connection getConnection() {
@@ -65,17 +48,27 @@ public class Chat {
 		this.password = password;
 	}
 
-	public void startConnection() {
-		try {
-			channelSetup();
-			System.out.println("Conectado com sucesso!");
-		} catch (Exception e) {
-			e.printStackTrace();
+	public void channelSetup() throws IOException, Exception {
+		if (connection == null) {
+			ConnectionFactory factory = new ConnectionFactory();
+			factory.setHost(host); // IP da máquina virtual
+			factory.setUsername(name);
+			factory.setPassword(password);
+			factory.setVirtualHost("/");
+			connection = factory.newConnection();
 		}
+		// Cria dois canais
+		channels.put("mensagens", connection.createChannel());
+		channels.put("arquivos", connection.createChannel());
+
+		// Cria duas filas
+		channels.get("mensagens").queueDeclare(username, false, false, false, null);
+		channels.get("arquivos").queueDeclare(username, false, false, false, null);
 	}
 
+	
 	public void waitMessage() throws Exception {
-		Consumer consumer = new DefaultConsumer(channel.get("mensagens")) {
+		Consumer consumer = new DefaultConsumer(channels.get("mensagens")) {
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
 					byte[] body) throws IOException {
 				MensagemProto.Mensagem contatoMensagem = MensagemProto.Mensagem.parseFrom(body);
@@ -107,11 +100,12 @@ public class Chat {
 			}
 		};
 
-		channel.get("mensagens").basicConsume(username, true, consumer); // a fila tem o mesmo nome do username
+		channels.get("mensagens").basicConsume(username, true, consumer); // a fila tem o mesmo nome do username
 	}
 
 	public void execute(ActionStrategy strategy, String arrow, String input) throws Exception {
-		strategy.run(channel.get("mensagens"), new Input(arrow, input), username);
+		strategy.run(channels.get("mensagens"), new Input(arrow, input), username);
+		strategy.run(channels.get("arquivos"), new Input(arrow, input), username);
 	}
 
 }

@@ -24,9 +24,9 @@ public class Demo {
 	private static void init() throws Exception {
 		System.out.print("User: ");
 		String user = scanner.nextLine().trim();
-//		currentQueue = sender; // Descomentar para que o usuário recebe mensagens dele mesmo
+//		currentQueue = sender; // Descomentar para que o usuário receba mensagens dele mesmo
 		chat = new Chat(user, "44.202.121.76", "juanbomfim22", "juanbomfim22");
-		chat.startConnection();
+		chat.channelSetup();
 		chat.waitMessage();
 
 		System.out.print(currentArrow);
