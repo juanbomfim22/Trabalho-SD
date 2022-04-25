@@ -25,7 +25,7 @@ public class Demo {
 		System.out.print("User: ");
 		String user = scanner.nextLine().trim();
 //		currentQueue = sender; // Descomentar para que o usuário recebe mensagens dele mesmo
-		chat = new Chat(user, "44.202.121.76", "juanbomfim22", "juanbomfim22");
+		chat = new Chat(user, "54.221.23.128", "leticia", "rabbit");
 		chat.startConnection();
 		chat.waitMessage();
 
@@ -52,6 +52,12 @@ public class Demo {
 				strategy = new DelFromGroup();
 			}
 			if (input.startsWith("!upload")) {
+				if(!currentQueue.equals("")){
+					currentQueue=currentQueue+"Files";
+				}
+				else if(!currentExchange.equals("")){
+					currentExchange=currentExchange+"Files";
+				}
 				strategy = new SendFile(currentQueue, currentExchange);
 			}
 			else { 
@@ -78,6 +84,7 @@ public class Demo {
 			System.out.print(currentArrow);
 		}
 		Chat.getChannel().get("mensagens").close();
+		Chat.getChannel().get("arquivos").close();
 		Chat.getConnection().close();
 		scanner.close();
 		System.exit(0);
