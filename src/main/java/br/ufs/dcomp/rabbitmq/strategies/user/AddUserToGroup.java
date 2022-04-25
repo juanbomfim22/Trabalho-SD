@@ -9,6 +9,9 @@ public class AddUserToGroup implements ActionStrategy {
 
 	@Override
 	public void run(Channel channel, Input input, String username) throws Exception {
-	    channel.queueBind(input.getArgs().get(0), input.getArgs().get(1), "");	
+		String user = input.getArgs().get(0);
+		String exchange = input.getArgs().get(1);
+	    channel.queueBind(user, exchange, "");	
+	    System.out.println("Adicionando: " + user + " em " + exchange);
 	}
 }

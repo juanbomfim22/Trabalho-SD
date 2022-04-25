@@ -36,7 +36,7 @@ class TestChat {
 
 	@AfterAll
 	static void tearDownOnce() throws Exception {
-		chat.getSendQueue().getChannel().close();
+		chat.getSendQueue().getChannels().close();
 		chat.getSendQueue().getConnection().close();
 	}
 	
