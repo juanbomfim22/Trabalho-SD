@@ -16,8 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import br.ufs.dcomp.rabbitmq.Demo;
+import br.ufs.dcomp.rabbitmq.Queue;
+
 class TestChat {
-	private static Chat chat;
+	private static Demo chat;
 	/*
 	 *
 	 * 
@@ -28,7 +31,7 @@ class TestChat {
 	@BeforeAll
 	static void setUpOnce() throws Exception {
 		String username = "tarcisiorocha";
-		chat = new Chat(username, "54.86.170.54", "juanbomfim22", "juanbomfim22");
+		chat = new Demo(username, "54.86.170.54", "juanbomfim22", "juanbomfim22");
 	}
 
 	@AfterAll
