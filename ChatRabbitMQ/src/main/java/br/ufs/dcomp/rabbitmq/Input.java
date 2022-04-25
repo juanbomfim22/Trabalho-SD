@@ -21,10 +21,10 @@ public class Input {
 	private String action = ""; // !addUser
 	private List<String> args = new ArrayList<>(); // [teste, grupo1]
 
-	public String getWithoutPrompt() { 
+	public String getWithoutPrompt() {
 		return withoutPrompt;
 	}
-	
+
 	public String getFullLine() {
 		return fullLine;
 	}
@@ -33,6 +33,8 @@ public class Input {
 		return prompt;
 	}
 
+	// Retorna o nome do chaveamento
+	// Ex: @marciocosta>> ===> marciocosta
 	public String getName() {
 		return name;
 	}
@@ -45,27 +47,35 @@ public class Input {
 		return args;
 	}
 
-	public Input(String fullLine) {
-//		if (specialChars.contains(fullLine.charAt(0) + "")) {// começa com @,#,!
-
-			List<String> parts = Arrays.asList(fullLine.split(" "));
-
-			this.fullLine = fullLine;
-			this.action = parts.get(1);
-			this.prompt = parts.get(0);
-
+	public boolean isValidCommand() {
+		return actions.contains(action);
+	}
+	
+	public Input(String arrow, String input) {
+		if(input.startsWith("!")) { 
+			List<String> parts = Arrays.asList(input.split(" "));
+			this.prompt = arrow;
+			this.action = parts.get(0).substring(1);
+			this.fullLine = arrow + input;
+	
 			// Remove todos os specialChars e setas do prompt
-			this.name = specialChars.stream().reduce(parts.get(0), (acc, curr) -> acc.replace(curr, ""))
-					.replace(arrow.strip(), "");
-			this.args = parts.stream().skip(2).collect(Collectors.toList());
-//		} else {
-//			this.prompt = arrow;
-//			this.withoutPrompt = fullLine.replace(arrow, "");
-//			this.fullLine = fullLine;
-//		}
+			this.name = specialChars.stream().reduce(arrow, (acc, curr) -> acc.replace(curr, "")).replaceAll(">", "")
+					.strip();
+			this.args = parts.stream().skip(1).collect(Collectors.toList());
+		}
+		else {
+		 
+			if(input.startsWith("@") || input.startsWith("#")) {
+				this.prompt = input;
+			} else {
+				this.prompt = arrow;
+			}
+			this.name = arrow.substring(1);
+			this.fullLine = arrow + input;
+		}
 	}
 
-	public Input(String... values) {
-		this.args = Arrays.asList(values);
-	}
+//	public Input(String... values) {
+//		this.args = Arrays.asList(values);
+//	}
 }
