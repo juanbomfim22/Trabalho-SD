@@ -13,7 +13,9 @@ public class AddGroup implements ActionStrategy {
 		String exchange = input.getArgs().get(0);
 		System.out.println("Declaring exchange:" + exchange +"!");
 	    channel.exchangeDeclare(exchange,"fanout");
+		channel.exchangeDeclare(exchange + "Files","fanout");
 	    new AddUserToGroup().run(channel, new Input("!addUser "+  username + " " + exchange), null);
+	    new AddUserToGroup().run(channel, new Input("!addUser "+  username + "Files" + " " + exchange + "Files"), null);
 	}
  
 

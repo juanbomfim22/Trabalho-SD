@@ -71,6 +71,12 @@ public class Demo {
 					strategy = new DelFromGroup();
 				}
 				if (input.startsWith("!upload")) {
+					if (!currentQueue.equals("")){
+						currentQueue = currentQueue + "Files";
+					}
+					else if(!currentExchange.equals("")){
+						currentExchange = currentExchange + "Files";
+					}
 					strategy = new SendFile(currentQueue, currentExchange);
 				}  
 			}
