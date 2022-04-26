@@ -4,7 +4,6 @@ import com.rabbitmq.client.Channel;
 
 import br.ufs.dcomp.rabbitmq.Input;
 import br.ufs.dcomp.rabbitmq.strategies.ActionStrategy;
-import br.ufs.dcomp.rabbitmq.strategies.user.AddUserToGroup;
 
 public class RemoveGroup implements ActionStrategy {
 	

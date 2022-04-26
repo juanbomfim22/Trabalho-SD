@@ -10,7 +10,6 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
 import br.ufs.dcomp.rabbitmq.Demo;
-import br.ufs.dcomp.rabbitmq.Input;
 import br.ufs.dcomp.rabbitmq.util.PATH;
 
 public final class PROTO{
@@ -67,28 +66,4 @@ public final class PROTO{
 			};
 		return consumer;
 	}
-	
-	
-	public static Consumer handleMessage(Channel channel) {
-		Consumer consumer = new DefaultConsumer(channel) {
-			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
-					byte[] body) throws IOException {
-				MensagemProto.Mensagem contatoMensagem = MensagemProto.Mensagem.parseFrom(body);
-				MensagemProto.Conteudo conteudo = contatoMensagem.getConteudo();
- 
-				String emissor = contatoMensagem.getEmissor();
-				String data = contatoMensagem.getData();
-				String hora = contatoMensagem.getHora();
-				String grupo = contatoMensagem.getGrupo();
-				String nome = conteudo.getNome();
-				
-//				if(nome.equals("")) nome = "DEFAULT.txt";
-
-			
-			}
-		};
-		return consumer;
-	}
-	 
-	
 }
