@@ -1,22 +1,16 @@
 package br.ufs.dcomp.rabbitmq.chat;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
 
 import br.ufs.dcomp.rabbitmq.Input;
-import br.ufs.dcomp.rabbitmq.proto.MensagemProto;
+import br.ufs.dcomp.rabbitmq.proto.PROTO;
 import br.ufs.dcomp.rabbitmq.strategies.ActionStrategy;
 
 /*
@@ -33,7 +27,7 @@ public class Chat {
 	private static Map<String, Channel> channels = new HashMap<>();
 	private static Connection connection;
 
-	public static Map<String, Channel> getChannel() {
+	public static Map<String, Channel> getChannels() {
 		return channels;
 	}
 
@@ -68,44 +62,13 @@ public class Chat {
 
 	
 	public void waitMessage() throws Exception {
-		Consumer consumer = new DefaultConsumer(channels.get("mensagens")) {
-			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
-					byte[] body) throws IOException {
-				MensagemProto.Mensagem contatoMensagem = MensagemProto.Mensagem.parseFrom(body);
-				MensagemProto.Conteudo conteudo = contatoMensagem.getConteudo();
-
-				String emissor = contatoMensagem.getEmissor();
-				String data = contatoMensagem.getData();
-				String hora = contatoMensagem.getHora();
-				String grupo = contatoMensagem.getGrupo();
-				String nome = conteudo.getNome();
-				
-				if(nome.equals("")) nome = "DEFAULT.txt";
-
-				byte[] corpoMensagem = conteudo.getCorpo().toByteArray();
-
-				System.out.print("\033[2K"); // Erase line content
-
-				// Descomentar essas 3 e comentar as 3 debaixo pra testar o arquivo envios
-				
-				Path path = Paths.get("/tmp/"+nome);
-				
-				Files.write(path, corpoMensagem);
-				System.out.println("\r" + "(" + data + " às " + hora + ") " + "Arquivo \"" + nome + "\" recebido de @"
-						+ emissor + "!");
-
-//				String strMensagem = new String(corpoMensagem, "UTF-8"); // FORMATAR DISPLAY DE MENSAGEM
-//				String grupoEmissor = grupo.equals("") ? emissor : emissor + "#" + grupo;
-//				System.out.println("\r" + "(" + data + " às " + hora + ") " + grupoEmissor + " diz: " + strMensagem);
-			}
-		};
-
+		Consumer consumer = PROTO.handle(channels, "mensagens");
 		channels.get("mensagens").basicConsume(username, true, consumer); // a fila tem o mesmo nome do username
 	}
 
 	public void execute(ActionStrategy strategy, String arrow, String input) throws Exception {
 		strategy.run(channels.get("mensagens"), new Input(arrow, input), username);
-		strategy.run(channels.get("arquivos"), new Input(arrow, input), username);
+//		strategy.run(channels.get("arquivos"), new Input(arrow, input), username);
 	}
 
 }

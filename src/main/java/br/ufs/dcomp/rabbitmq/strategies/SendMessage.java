@@ -1,9 +1,5 @@
 package br.ufs.dcomp.rabbitmq.strategies;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import com.rabbitmq.client.Channel;
 
 import br.ufs.dcomp.rabbitmq.FormattedDate;
@@ -23,7 +19,7 @@ public class SendMessage implements ActionStrategy {
 	@Override
 	public void run(Channel channel, Input input, String username) throws Exception {
 			FormattedDate date = new FormattedDate();
-			MensagemProto.Conteudo conteudo = PROTO.createConteudoProto("text/plain", input.getFullLine().getBytes("UTF-8"), ""); // mensagens
+			MensagemProto.Conteudo conteudo = PROTO.createConteudoProto("text/plain", input.getInput().getBytes("UTF-8"), ""); // mensagens
 			byte[] mensagemProto = PROTO.createMensagemProto(username, 
 					date.getDay(),
 					date.getHour(), currentExchange, conteudo);
