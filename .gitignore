@@ -1,2 +1,25 @@
+<<<<<<< HEAD
 .vscode
 target
+=======
+# Maven
+target/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Eclipse
+/.classpath
+/.settings/
+/.project
+/bin/
+
+# IntelliJ
+.idea
+*.iml
+*.ipr
+*.iws
+
+# Misc
+*.log
+>>>>>>> 202aec1095876b5526cd688e8bf6af581b1de593
