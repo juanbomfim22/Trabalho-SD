@@ -9,7 +9,7 @@ public class RemoveGroup implements ActionStrategy {
 	
 	@Override
 	public void run(Channel channel, Input input, String username) throws Exception{
-		channel.exchangeDelete(input.getArgs().get(0));
+		channel.exchangeDelete(input.getArgs(0));
 	}
 
 }

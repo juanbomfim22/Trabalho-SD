@@ -9,7 +9,7 @@ public class DelFromGroup implements ActionStrategy {
 	
 	@Override
 	public void run(Channel channel, Input input, String username) throws Exception{
-	    channel.queueUnbind(input.getArgs().get(0), input.getArgs().get(1), "");
+	    channel.queueUnbind(input.getArgs(0), input.getArgs(1), "");
 	}
  
 

@@ -1,15 +1,17 @@
 package br.ufs.dcomp.rabbitmq.chat;
 
-import br.ufs.dcomp.rabbitmq.Input;
-import br.ufs.dcomp.rabbitmq.proto.PROTO;
-import br.ufs.dcomp.rabbitmq.strategies.ActionStrategy;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Consumer;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DeliverCallback;
+
+import br.ufs.dcomp.rabbitmq.Input;
+import br.ufs.dcomp.rabbitmq.proto.PROTO;
+import br.ufs.dcomp.rabbitmq.strategies.ActionStrategy;
 
 /*
  * Doesn't know the concrete action method (strategy) user has
@@ -54,30 +56,20 @@ public class Chat {
     channels.put("mensagens", connection.createChannel());
     channels.put("arquivos", connection.createChannel());
 
-    // Cria duas filas
+    // Cria duas filas em dois canais distintos para cada usuário
     channels.get("mensagens").queueDeclare(username, false, false, false, null);
-    channels.get("arquivos").queueDeclare(username, false, false, false, null);
+    channels.get("arquivos").queueDeclare(username+".arquivos", false, false, false, null);
   }
 
   public void waitMessage() throws Exception {
-    Consumer consumerMessages = PROTO.handle(channels, "mensagens");
-    Consumer consumerFiles = PROTO.handle(channels, "arquivos");
-
-    channels.get("mensagens").basicConsume(username, true, consumerMessages); // a fila tem o mesmo nome do username
-    new Thread() {
-      @Override
-      public void run() {
-        try {
-          channels.get("arquivos").basicConsume(username + "Files", true, consumerFiles); // a fila tem o mesmo nome do username
-        } catch (IOException e) {
-          System.out.println(e);
-        }
-      }
-    }.start();
+	 DeliverCallback consumerMessages = PROTO.constructCallback("mensagens");
+	 DeliverCallback consumerFiles = PROTO.constructCallback("arquivos");
+	 channels.get("mensagens").basicConsume(username, true, consumerMessages, consumerTag -> {}); // a fila tem o mesmo nome do username
+	 channels.get("arquivos").basicConsume(username+".arquivos", true, consumerFiles, consumerTag -> {}); // a fila tem o mesmo nome do username
   }
 
   public void execute(ActionStrategy strategy, String arrow, String input)
-    throws Exception {
-    strategy.run(channels.get("mensagens"), new Input(arrow, input), username);
+    throws Exception {	   
+	  strategy.run(channels.get("mensagens"), new Input(arrow, input), username);
   }
 }

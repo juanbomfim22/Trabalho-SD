@@ -1,15 +1,15 @@
 package br.ufs.dcomp.rabbitmq.proto;
 
 import java.io.IOException;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.DeliverCallback;
 
 import br.ufs.dcomp.rabbitmq.Demo;
+import br.ufs.dcomp.rabbitmq.Symbols;
+import br.ufs.dcomp.rabbitmq.date.FormattedDate;
 import br.ufs.dcomp.rabbitmq.util.PATH;
 
 public final class PROTO{
@@ -36,34 +36,43 @@ public final class PROTO{
 		return buffer;
 	}
 	
-	public static Consumer handle(Map<String, Channel> channels, String channelName) {
-		Consumer consumer =  new DefaultConsumer(channels.get(channelName)) { 
-			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
-				byte[] body) throws IOException {
-					MensagemProto.Mensagem contatoMensagem = MensagemProto.Mensagem.parseFrom(body);
-					MensagemProto.Conteudo conteudo = contatoMensagem.getConteudo();
-	 
-					String emissor = contatoMensagem.getEmissor();
-					String data = contatoMensagem.getData();
-					String hora = contatoMensagem.getHora();
-					String grupo = contatoMensagem.getGrupo();
-					String nome = conteudo.getNome();
-					byte[] corpoMensagem = conteudo.getCorpo().toByteArray();
+	public static byte[] fileBytes(String filename, String username, String currentExchange) throws IOException {
+		FormattedDate date = new FormattedDate();
+		Path path = Paths.get(filename);
+		String mime = Files.probeContentType(path);
+		String fileName = path.getFileName().toString();
+		byte[] array = Files.readAllBytes(path);
+		MensagemProto.Conteudo conteudo = PROTO.createConteudoProto(mime, array, fileName);
+		byte[] mensagemProto = PROTO.createMensagemProto(username, date.getDay(), date.getHour(),
+				currentExchange, conteudo);
+		return mensagemProto;
+	}
+	
+	public static DeliverCallback constructCallback(String channelName) {
+		DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+			MensagemProto.Mensagem contatoMensagem = MensagemProto.Mensagem.parseFrom(delivery.getBody());
+			MensagemProto.Conteudo conteudo = contatoMensagem.getConteudo();
+			String emissor = contatoMensagem.getEmissor();
+			String data = contatoMensagem.getData();
+			String hora = contatoMensagem.getHora();
+			String grupo = contatoMensagem.getGrupo();
+			String nomeArq = conteudo.getNome();
+			byte[] corpoMensagem = conteudo.getCorpo().toByteArray();
 
-					System.out.print("\033[2K"); // Erase line content
-					if(channelName.equals("mensagens")) {
-						String strMensagem = new String(corpoMensagem, "UTF-8"); // FORMATAR DISPLAY DE MENSAGEM
-						String grupoEmissor = grupo.equals("") ? emissor : emissor + "#" + grupo;
-						System.out.println("\r" + "(" + data + " às " + hora + ") " + grupoEmissor + " diz: " + strMensagem);
-					}
-					if(channelName.equals("arquivos")) {
-						PATH.write("/tmp/", nome, corpoMensagem);
-						System.out.println("\r" + "(" + data + " às " + hora + ") " + "Arquivo \"" + nome + "\" recebido de @"
-								+ emissor + "!");
-					}
-					System.out.print(Demo.currentArrow);
-				}
-			};
-		return consumer;
+			System.out.print("\033[2K"); // Erase line content
+						
+			if(channelName.equals("mensagens")) {
+				String strMensagem = new String(corpoMensagem, "UTF-8"); // FORMATAR DISPLAY DE MENSAGEM
+				String grupoEmissor = grupo.equals("") ? emissor : emissor + Symbols.GROUP + grupo;
+				System.out.println("\r" + "(" + data + " às " + hora + ") " + grupoEmissor + " diz: " + strMensagem);
+			}
+			if(channelName.equals("arquivos")) {
+				PATH.write("/tmp/Downloads/"+emissor, nomeArq, corpoMensagem);
+				System.out.println("\r" + "(" + data + " às " + hora + ") " + "Arquivo \"" + nomeArq + "\" recebido de @"
+						+ emissor + "!");
+			}
+			System.out.print(Demo.currentArrow);
+	    };
+		return deliverCallback;
 	}
 }

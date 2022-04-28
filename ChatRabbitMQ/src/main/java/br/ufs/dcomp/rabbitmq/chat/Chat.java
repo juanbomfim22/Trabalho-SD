@@ -47,7 +47,7 @@ public class Chat {
 		 channel.put("arquivos", connection.createChannel());
 
 		channel.get("mensagens").queueDeclare(username, false, false, false, null);
-		 channel.get("arquivos").queueDeclare(username+"Files", false, false, false, null);
+		 channel.get("arquivos").queueDeclare(username+".arquivos", false, false, false, null);
 	}
 
 	public static Map<String, Channel> getChannel() {
@@ -132,7 +132,7 @@ public class Chat {
     @Override
     public void run(){
     	try{
-      channel.get("arquivos").basicConsume(username+"Files", true, consumerFiles); // a fila tem o mesmo nome do username
+      channel.get("arquivos").basicConsume(username+".arquivos", true, consumerFiles); // a fila tem o mesmo nome do username
     	} catch(IOException e){
     		System.out.println(e);
     	}

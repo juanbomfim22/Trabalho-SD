@@ -1,64 +1,42 @@
 package br.ufs.dcomp.rabbitmq.strategies;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import com.rabbitmq.client.Channel;
 
-import br.ufs.dcomp.rabbitmq.FormattedDate;
 import br.ufs.dcomp.rabbitmq.Input;
-import br.ufs.dcomp.rabbitmq.proto.MensagemProto;
+import br.ufs.dcomp.rabbitmq.Symbols;
 import br.ufs.dcomp.rabbitmq.proto.PROTO;
 
-public class SendFile implements ActionStrategy {
-	private String currentQueue;
-	private String currentExchange;
+public class UploadFile implements ActionStrategy {
+	private String currentQueue="";
+	private String currentExchange="";
 
-	public SendFile(String currentQueue, String currentExchange) {
+	public UploadFile(String currentQueue, String currentExchange) {
 		this.currentQueue = currentQueue;
 		this.currentExchange = currentExchange;
 	}
-
-	// Esse run eh da Thread!
-	public void run() {
-
-	}
-
-	public void sendFile(final Channel channel, final Input input, final String username) {
-		new Thread(new Runnable() {
+	
+	@Override
+	public void run(Channel channel, Input input, String username) throws Exception {			
+		String recipient = !input.getName().equals("") ? input.getName() : username;
+		String queue = recipient + ".arquivos";
+		System.out.println("Enviando \"" + input.getArgs(0) + "\" para " + recipient);
+		new Thread() {
+			@Override
 			public void run() {
-				try {
-					FormattedDate date = new FormattedDate();
-					Path path = Paths.get(input.getArgs().get(0));
-					String mime = Files.probeContentType(path);
-					String fileName = path.getFileName().toString();
-					byte[] array = Files.readAllBytes(path);
+				try {				
+					String filename = input.getArgs(0);
+					byte[] msgProto = PROTO.fileBytes(filename, username, currentExchange);
 
-					MensagemProto.Conteudo conteudo = PROTO.createConteudoProto(mime, array, fileName);
-					byte[] mensagemProto = PROTO.createMensagemProto(username, date.getDay(), date.getHour(),
-							currentExchange, conteudo);
-
-					channel.basicPublish(currentExchange, currentQueue, null, mensagemProto);
-					System.out.println("\nArquivo \"" + path + "\" foi enviado para @" + input.getName() + "!");
-
-//			System.out.print(input.getPrompt());
+//					sleep(10*1000); // atraso proposital
+					
+					channel.basicPublish(currentExchange, queue, null, msgProto);
+					System.out.println("\nArquivo \"" + filename + "\" foi enviado para "+ input.getPromptSymbol() + recipient + "!");
+					System.out.print(input.getPrompt());
 
 				} catch (Exception e) {
-					System.out.println(e.getMessage());
+					System.err.print(e);
 				}
 			}
-		}).start();
-	}
-
-	@Override
-	public void run(Channel channel, Input input, String username) throws Exception {
-		String recepient = input.getName();
-		if (recepient.equals("")) {
-			// Significa que a seta está ">> ", envie para o próprio user?
-			recepient = username;
-		}
-		System.out.println("Enviando \"" + input.getArgs().get(0) + "\" para " + recepient);
-		sendFile(channel, input, username); 
+		}.start();
 	}
 }

@@ -6,11 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Input {
-	public static final String arrow = ">> ";
-	public static final List<String> specialChars = Arrays.asList("@", "#", "!");
-	public static final List<String> actions = Arrays.asList("addGroup", "addUser", "delFromGroup", "removeGroup",
-			"upload");
-
 	/*
 	 * EX: @marciocosta>> !addUser teste
 	 */
@@ -18,8 +13,11 @@ public class Input {
 	private String input = ""; // !addUser teste grupo1
 	private String name = ""; // marciocosta
 	private String prompt = ""; // @marciocosta>>
+	private String promptSymbol = ""; // "@"
 	private String action = ""; // !addUser
+	private String actionSymbol = ""; // !
 	private List<String> args = new ArrayList<>(); // [teste, grupo1]
+	
 
 	public String getInput() {
 		return input;
@@ -41,43 +39,58 @@ public class Input {
 		return action;
 	}
 
-	public List<String> getArgs() {
-		return args;
+	public String getArgs(int i) {
+		return args.get(i);
 	}
 
-	public boolean isValidCommand() {
-		return actions.contains(action);
+	public String getPromptSymbol() {
+		return promptSymbol;
 	}
 	
-	public Input(String input) {
-		this("", input);
+	public String getActionSymbol() {
+		return actionSymbol;
+	}
+		
+	public boolean startsWithSymbol() {
+		return input.startsWith(Symbols.COMMAND) 
+				|| input.startsWith(Symbols.USER) 
+				|| input.startsWith(Symbols.GROUP);
 	}
 	
-	public Input(String arrow, String input) {
+	public boolean isEmpty() {
+		return input.isEmpty();
+	}
+	
+	public Input() {}
+	
+	public Input(String userArrow, String input) {
+		this.prompt = userArrow;
 		this.input = input;
-		if(input.startsWith("!")) { 
+		this.fullLine = userArrow + input;
+		 
+		this.name = Arrays.asList(Symbols.COMMAND, Symbols.USER, Symbols.GROUP)
+					.stream()
+					.reduce(userArrow, (acc, curr) -> acc.replace(curr, ""))
+					.replace(Symbols.ARROW, "");
+
+		if(userArrow.startsWith(Symbols.USER)) {
+			this.promptSymbol = Symbols.USER;
+		}
+		if(userArrow.startsWith(Symbols.GROUP)) {
+			this.promptSymbol = Symbols.GROUP;
+		}
+		
+		if(input.startsWith(Symbols.USER)){
+			this.actionSymbol = input.substring(0,Symbols.USER.length());			
+		}
+		if(input.startsWith(Symbols.GROUP)){
+			this.actionSymbol = input.substring(0,Symbols.GROUP.length());			
+		}	
+		if(input.startsWith(Symbols.COMMAND)) { 
+			this.actionSymbol = input.substring(0,Symbols.COMMAND.length());	
 			List<String> parts = Arrays.asList(input.split("\\s+"));
-			this.prompt = arrow;
-			this.action = parts.get(0).substring(1);
-			this.fullLine = arrow + input;
-	
-			// Remove todos os specialChars e setas do prompt
-			this.name = specialChars.stream().reduce(arrow, (acc, curr) -> acc.replace(curr, "")).replaceAll(">", "")
-					.strip();
+			this.action = parts.get(0).substring(Symbols.COMMAND.length());
 			this.args = parts.stream().skip(1).collect(Collectors.toList());
 		}
-		else {
-			if(input.startsWith("@") || input.startsWith("#")) {
-				this.prompt = input;
-			} else {
-				this.prompt = arrow;
-			}
-			this.name = arrow.substring(1);
-			this.fullLine = arrow + input;
-		}
 	}
-
-//	public Input(String... values) {
-//		this.args = Arrays.asList(values);
-//	}
 }

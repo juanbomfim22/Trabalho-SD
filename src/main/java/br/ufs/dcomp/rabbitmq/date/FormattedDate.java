@@ -1,4 +1,4 @@
-package br.ufs.dcomp.rabbitmq;
+package br.ufs.dcomp.rabbitmq.date;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

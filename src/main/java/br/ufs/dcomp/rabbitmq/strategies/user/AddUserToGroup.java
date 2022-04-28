@@ -9,9 +9,10 @@ public class AddUserToGroup implements ActionStrategy {
 
 	@Override
 	public void run(Channel channel, Input input, String username) throws Exception {
-		String user = input.getArgs().get(0);
-		String exchange = input.getArgs().get(1);
-	    channel.queueBind(user, exchange, "");	
-	    System.out.println("Adicionando: " + user + " em " + exchange);
+		String userQueue = input.getArgs(0);
+		String exchange = input.getArgs(1);
+	    channel.queueBind(userQueue, exchange, "*.mensagens"); // deve ter pelo menos um ponto na string (RabbitMQ)
+	    channel.queueBind(userQueue+".arquivos", exchange, "*.arquivos"); //  deve ter pelo menos um ponto na string (RabbitMQ)
+	    System.out.println("Adicionando " + userQueue + " em: " + exchange);
 	}
 }
