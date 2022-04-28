@@ -1,4 +1,4 @@
-package br.ufs.dcomp.rabbitmq.proto;
+package br.ufs.dcomp.rabbitmq.util;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,10 +7,13 @@ import java.nio.file.Paths;
 
 import com.rabbitmq.client.DeliverCallback;
 
-import br.ufs.dcomp.rabbitmq.Demo;
-import br.ufs.dcomp.rabbitmq.Symbols;
+import br.ufs.dcomp.rabbitmq.Main;
+import br.ufs.dcomp.rabbitmq.chat.Symbols;
 import br.ufs.dcomp.rabbitmq.date.FormattedDate;
-import br.ufs.dcomp.rabbitmq.util.PATH;
+import br.ufs.dcomp.rabbitmq.proto.MensagemProto;
+import br.ufs.dcomp.rabbitmq.proto.MensagemProto.Conteudo;
+import br.ufs.dcomp.rabbitmq.proto.MensagemProto.Mensagem;
+import br.ufs.dcomp.rabbitmq.proto.MensagemProto.Conteudo.Builder;
 
 public final class PROTO{
  
@@ -71,7 +74,7 @@ public final class PROTO{
 				System.out.println("\r" + "(" + data + " às " + hora + ") " + "Arquivo \"" + nomeArq + "\" recebido de @"
 						+ emissor + "!");
 			}
-			System.out.print(Demo.currentArrow);
+			System.out.print(Main.currentArrow);
 	    };
 		return deliverCallback;
 	}

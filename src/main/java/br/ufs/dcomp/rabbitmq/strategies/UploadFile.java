@@ -2,9 +2,9 @@ package br.ufs.dcomp.rabbitmq.strategies;
 
 import com.rabbitmq.client.Channel;
 
-import br.ufs.dcomp.rabbitmq.Input;
-import br.ufs.dcomp.rabbitmq.Symbols;
-import br.ufs.dcomp.rabbitmq.proto.PROTO;
+import br.ufs.dcomp.rabbitmq.chat.Input;
+import br.ufs.dcomp.rabbitmq.chat.Symbols;
+import br.ufs.dcomp.rabbitmq.util.PROTO;
 
 public class UploadFile implements ActionStrategy {
 	private String currentQueue="";

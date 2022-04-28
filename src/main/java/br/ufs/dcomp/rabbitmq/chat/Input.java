@@ -1,4 +1,4 @@
-package br.ufs.dcomp.rabbitmq;
+package br.ufs.dcomp.rabbitmq.chat;
 
 import java.util.ArrayList;
 import java.util.Arrays;

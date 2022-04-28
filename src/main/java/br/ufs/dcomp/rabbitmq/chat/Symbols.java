@@ -1,4 +1,4 @@
-package br.ufs.dcomp.rabbitmq;
+package br.ufs.dcomp.rabbitmq.chat;
 
 public final class Symbols {
 	public final static String ARROW = ">> ";

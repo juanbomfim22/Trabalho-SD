@@ -9,9 +9,8 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 
-import br.ufs.dcomp.rabbitmq.Input;
-import br.ufs.dcomp.rabbitmq.proto.PROTO;
 import br.ufs.dcomp.rabbitmq.strategies.ActionStrategy;
+import br.ufs.dcomp.rabbitmq.util.PROTO;
 
 /*
  * Doesn't know the concrete action method (strategy) user has

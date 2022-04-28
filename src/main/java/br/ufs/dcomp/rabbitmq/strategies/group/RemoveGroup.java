@@ -2,7 +2,7 @@ package br.ufs.dcomp.rabbitmq.strategies.group;
 
 import com.rabbitmq.client.Channel;
 
-import br.ufs.dcomp.rabbitmq.Input;
+import br.ufs.dcomp.rabbitmq.chat.Input;
 import br.ufs.dcomp.rabbitmq.strategies.ActionStrategy;
 
 public class RemoveGroup implements ActionStrategy {

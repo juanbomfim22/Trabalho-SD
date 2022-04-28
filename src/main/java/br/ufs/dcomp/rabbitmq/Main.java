@@ -4,6 +4,7 @@ import java.util.Scanner;
 import java.util.stream.Stream;
 
 import br.ufs.dcomp.rabbitmq.chat.Chat;
+import br.ufs.dcomp.rabbitmq.chat.Symbols;
 import br.ufs.dcomp.rabbitmq.strategies.ActionStrategy;
 import br.ufs.dcomp.rabbitmq.strategies.UploadFile;
 import br.ufs.dcomp.rabbitmq.strategies.SendMessage;
@@ -12,7 +13,7 @@ import br.ufs.dcomp.rabbitmq.strategies.group.RemoveGroup;
 import br.ufs.dcomp.rabbitmq.strategies.user.AddUserToGroup;
 import br.ufs.dcomp.rabbitmq.strategies.user.DelFromGroup;
 
-public class Demo {
+public class Main {
 	private static final Scanner scanner = new Scanner(System.in);
 
 	public static String currentArrow = Symbols.ARROW;
