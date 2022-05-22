@@ -51,7 +51,7 @@ public final class PROTO{
 		return mensagemProto;
 	}
 	
-	public static DeliverCallback constructCallback(String channelName) {
+	public static DeliverCallback constructCallback(String channelName,String username) {
 		DeliverCallback deliverCallback = (consumerTag, delivery) -> {
 			MensagemProto.Mensagem contatoMensagem = MensagemProto.Mensagem.parseFrom(delivery.getBody());
 			MensagemProto.Conteudo conteudo = contatoMensagem.getConteudo();
@@ -70,7 +70,7 @@ public final class PROTO{
 				System.out.println("\r" + "(" + data + " às " + hora + ") " + grupoEmissor + " diz: " + strMensagem);
 			}
 			if(channelName.equals("arquivos")) {
-				PATH.write("/tmp/Downloads/"+emissor, nomeArq, corpoMensagem);
+				PATH.write("/home/ubuntu/environment/Downloads/"+username, nomeArq, corpoMensagem);
 				System.out.println("\r" + "(" + data + " às " + hora + ") " + "Arquivo \"" + nomeArq + "\" recebido de @"
 						+ emissor + "!");
 			}

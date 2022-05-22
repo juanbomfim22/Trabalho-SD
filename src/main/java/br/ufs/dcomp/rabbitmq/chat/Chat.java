@@ -61,8 +61,8 @@ public class Chat {
   }
 
   public void waitMessage() throws Exception {
-	 DeliverCallback consumerMessages = PROTO.constructCallback("mensagens");
-	 DeliverCallback consumerFiles = PROTO.constructCallback("arquivos");
+	 DeliverCallback consumerMessages = PROTO.constructCallback("mensagens",username);
+	 DeliverCallback consumerFiles = PROTO.constructCallback("arquivos",username);
 	 channels.get("mensagens").basicConsume(username, true, consumerMessages, consumerTag -> {}); // a fila tem o mesmo nome do username
 	 channels.get("arquivos").basicConsume(username+".arquivos", true, consumerFiles, consumerTag -> {}); // a fila tem o mesmo nome do username
   }

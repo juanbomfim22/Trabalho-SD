@@ -10,6 +10,7 @@ import br.ufs.dcomp.rabbitmq.strategies.UploadFile;
 import br.ufs.dcomp.rabbitmq.strategies.SendMessage;
 import br.ufs.dcomp.rabbitmq.strategies.group.AddGroup;
 import br.ufs.dcomp.rabbitmq.strategies.group.RemoveGroup;
+import br.ufs.dcomp.rabbitmq.strategies.group.ListUsersFromGroup;
 import br.ufs.dcomp.rabbitmq.strategies.user.AddUserToGroup;
 import br.ufs.dcomp.rabbitmq.strategies.user.DelFromGroup;
 
@@ -28,7 +29,7 @@ public class Main {
 		System.out.print("User: ");
 		String user = scanner.nextLine().trim();
 //		currentQueue = sender; // Descomentar para que o usuário receba mensagens dele mesmo
-		chat = new Chat(user, "54.85.112.196", "juanbomfim22", "juanbomfim22");
+		chat = new Chat(user, "172.31.29.253", "leticia", "rabbit"); //ip 
 		chat.channelSetup();
 		chat.waitMessage();
 		System.out.print(currentArrow);
@@ -80,6 +81,9 @@ public class Main {
 			}
 			if (input.startsWith(Symbols.UPL)) { 
 				strategy = new UploadFile(currentQueue, currentExchange);
+			}
+			if (input.startsWith(Symbols.LIST_USERS)) {
+				strategy = new ListUsersFromGroup();
 			}
 			
 			if (strategy != null && !input.isEmpty()) {
