@@ -11,4 +11,5 @@ public final class Symbols {
 	public final static String RMV_GRP = "!removeGroup";
 	public final static String UPL = "!upload";
 	public final static String LIST_USERS = "!listUsers";
+	public final static String LIST_GROUP = "!listGroups";
 }

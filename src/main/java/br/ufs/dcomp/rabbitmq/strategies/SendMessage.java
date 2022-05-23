@@ -18,8 +18,9 @@ public class SendMessage implements ActionStrategy {
 	}
 	 
 	@Override
-	public void run(Channel channel, Input input, String username) throws Exception {
-			if(input.getPrompt().startsWith(Symbols.GROUP)) {
+	public void run(Channel channel, Input input) throws Exception {
+		String username = input.getSource();	
+		if(input.getPrompt().startsWith(Symbols.GROUP)) {
 				currentQueue = currentQueue + ".mensagens";
 			}
 					

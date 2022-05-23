@@ -3,7 +3,6 @@ package br.ufs.dcomp.rabbitmq.strategies;
 import com.rabbitmq.client.Channel;
 
 import br.ufs.dcomp.rabbitmq.chat.Input;
-import br.ufs.dcomp.rabbitmq.chat.Symbols;
 import br.ufs.dcomp.rabbitmq.util.PROTO;
 
 public class UploadFile implements ActionStrategy {
@@ -16,7 +15,8 @@ public class UploadFile implements ActionStrategy {
 	}
 	
 	@Override
-	public void run(Channel channel, Input input, String username) throws Exception {			
+	public void run(Channel channel, Input input) throws Exception {			
+		String username = input.getSource();	
 		String recipient = !input.getName().equals("") ? input.getName() : username;
 		String queue = recipient + ".arquivos";
 		System.out.println("Enviando \"" + input.getArgs(0) + "\" para " + recipient);

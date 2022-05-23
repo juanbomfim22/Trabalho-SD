@@ -5,5 +5,5 @@ import com.rabbitmq.client.Channel;
 import br.ufs.dcomp.rabbitmq.chat.Input;
 
 public interface ActionStrategy {
-	void run(Channel channel, Input input, String username) throws Exception; // retorna a nova seta do chat >>
+	void run(Channel channel, Input input) throws Exception; // retorna a nova seta do chat >>
 }

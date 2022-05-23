@@ -17,6 +17,7 @@ public class Input {
 	private String action = ""; // !addUser
 	private String actionSymbol = ""; // !
 	private List<String> args = new ArrayList<>(); // [teste, grupo1]
+	private String source = ""; // Quem enviou o comando, ou seja, o "User:" que controla o chat
 	
 
 	public String getInput() {
@@ -50,7 +51,15 @@ public class Input {
 	public String getActionSymbol() {
 		return actionSymbol;
 	}
-		
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+	
 	public boolean startsWithSymbol() {
 		return input.startsWith(Symbols.COMMAND) 
 				|| input.startsWith(Symbols.USER) 
@@ -63,10 +72,11 @@ public class Input {
 	
 	public Input() {}
 	
-	public Input(String userArrow, String input) {
+	public Input(String userArrow, String input, String source) {
 		this.prompt = userArrow;
 		this.input = input;
 		this.fullLine = userArrow + input;
+		this.source = source;
 		 
 		this.name = Arrays.asList(Symbols.COMMAND, Symbols.USER, Symbols.GROUP)
 					.stream()

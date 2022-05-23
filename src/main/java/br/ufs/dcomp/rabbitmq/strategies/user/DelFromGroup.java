@@ -8,7 +8,7 @@ import br.ufs.dcomp.rabbitmq.strategies.ActionStrategy;
 public class DelFromGroup implements ActionStrategy {
 	
 	@Override
-	public void run(Channel channel, Input input, String username) throws Exception{
+	public void run(Channel channel, Input input) throws Exception{
 	    channel.queueUnbind(input.getArgs(0), input.getArgs(1), "");
 	}
  

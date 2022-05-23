@@ -8,7 +8,7 @@ import br.ufs.dcomp.rabbitmq.strategies.ActionStrategy;
 public class RemoveGroup implements ActionStrategy {
 	
 	@Override
-	public void run(Channel channel, Input input, String username) throws Exception{
+	public void run(Channel channel, Input input) throws Exception{
 		channel.exchangeDelete(input.getArgs(0));
 	}
 
