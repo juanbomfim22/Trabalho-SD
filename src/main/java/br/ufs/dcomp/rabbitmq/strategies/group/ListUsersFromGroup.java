@@ -2,11 +2,7 @@ package br.ufs.dcomp.rabbitmq.strategies.group;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,12 +17,16 @@ import br.ufs.dcomp.rabbitmq.strategies.ActionStrategy;
 
 public class ListUsersFromGroup extends AbstractListInfo implements ActionStrategy {
 	@Override
-	public void run(Channel channel, Input input) throws Exception {
-		String exchange = input.getArgs(0);
-		String restResource = PropertiesReader.getProperty("rabbit.URL");
-		String path = "/api/exchanges/%2f/" + exchange + "/bindings/source";
-		String json = getJsonFromPath(restResource, path);
-		action(json);
+	public void run(Map<String, Channel> channels, Input input) throws Exception {
+		try {
+			String exchange = input.getArgs(0);
+			String restResource = PropertiesReader.getProperty("rabbit.URL");
+			String path = "/api/exchanges/%2f/" + exchange + "/bindings/source";
+			String json = getJsonFromPath(restResource, path);
+			action(json);
+		} catch(Exception e) {
+			System.out.println("[Erro] Falta parâmetro: grupo");
+		}
 	}
 
 	@Override

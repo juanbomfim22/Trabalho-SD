@@ -2,6 +2,7 @@ package br.ufs.dcomp.rabbitmq.strategies.group;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,13 +18,17 @@ import br.ufs.dcomp.rabbitmq.strategies.ActionStrategy;
 public class ListGroups extends AbstractListInfo implements ActionStrategy {
 
 	@Override
-	public void run(Channel channel, Input input) throws Exception {
-		String username = input.getSource();
-		
-		String restResource = PropertiesReader.getProperty("rabbit.URL");
-		String path = "/api/queues/%2f/" +  username + "/bindings";
-		String json = getJsonFromPath(restResource, path);
-		action(json);
+	public void run(Map<String, Channel> channels, Input input) throws Exception {
+		try {
+			String username = input.getSource();
+			
+			String restResource = PropertiesReader.getProperty("rabbit.URL");
+			String path = "/api/queues/%2f/" +  username + "/bindings";
+			String json = getJsonFromPath(restResource, path);
+			action(json);
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	@Override

@@ -70,7 +70,7 @@ public final class PROTO{
 				System.out.println("\r" + "(" + data + " às " + hora + ") " + grupoEmissor + " diz: " + strMensagem);
 			}
 			if(channelName.equals("arquivos")) {
-				PATH.write("/home/ubuntu/environment/Downloads/"+username, nomeArq, corpoMensagem);
+				PATH.write(System.getProperty("user.home") + "/environment/Downloads/"+username, nomeArq, corpoMensagem);
 				System.out.println("\r" + "(" + data + " às " + hora + ") " + "Arquivo \"" + nomeArq + "\" recebido de @"
 						+ emissor + "!");
 			}

@@ -47,7 +47,7 @@ public class Chat {
 		this.password = PropertiesReader.getProperty("rabbit.password");
 	}
 
-	public void channelSetup() throws IOException, Exception {
+	public void channelSetup(String usr) throws IOException, Exception {
 		if (connection == null) {
 			ConnectionFactory factory = new ConnectionFactory();
 			factory.setHost(host); // IP da máquina virtual
@@ -61,10 +61,14 @@ public class Chat {
 		channels.put("arquivos", connection.createChannel());
 
 		// Cria duas filas em dois canais distintos para cada usuário
-		channels.get("mensagens").queueDeclare(username, false, false, false, null);
-		channels.get("arquivos").queueDeclare(username + ".arquivos", false, false, false, null);
+		declareQueues(channels, username);
 	}
-
+	
+	public static void declareQueues(Map<String, Channel> channels, String queueName) throws IOException { 
+		channels.get("mensagens").queueDeclare(queueName, false, false, false, null);
+		channels.get("arquivos").queueDeclare(queueName + ".arquivos", false, false, false, null);
+	}
+	
 	public void waitMessage() throws Exception {
 		DeliverCallback consumerMessages = PROTO.constructCallback("mensagens", username);
 		DeliverCallback consumerFiles = PROTO.constructCallback("arquivos", username);
@@ -75,6 +79,6 @@ public class Chat {
 	}
 
 	public void execute(ActionStrategy strategy, String arrow, String input) throws Exception {
-		strategy.run(channels.get("mensagens"), new Input(arrow, input, username));
+		strategy.run(channels, new Input(arrow, input, username));
 	}
 }

@@ -8,7 +8,7 @@ message Mensagem{
      string emissor = 1; // Nome do emissor
      string data = 2; // Data de envio
      string hora = 3; // Hora de envio
-     string grupo = 4; // Informa o nome do grupo, se a mensagem for para um grupo
+     string grupo = 4; // Informa o nome : grupo, se a mensagem for para um grupo
      Conteudo conteudo = 5;
 }
 

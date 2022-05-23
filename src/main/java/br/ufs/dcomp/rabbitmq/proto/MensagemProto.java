@@ -74,7 +74,7 @@ public final class MensagemProto {
 
     /**
      * <pre>
-     * Informa o nome do grupo, se a mensagem for para um grupo
+     * Informa o nome : grupo, se a mensagem for para um grupo
      * </pre>
      *
      * <code>optional string grupo = 4;</code>
@@ -82,7 +82,7 @@ public final class MensagemProto {
     java.lang.String getGrupo();
     /**
      * <pre>
-     * Informa o nome do grupo, se a mensagem for para um grupo
+     * Informa o nome : grupo, se a mensagem for para um grupo
      * </pre>
      *
      * <code>optional string grupo = 4;</code>
@@ -336,7 +336,7 @@ public final class MensagemProto {
     private volatile java.lang.Object grupo_;
     /**
      * <pre>
-     * Informa o nome do grupo, se a mensagem for para um grupo
+     * Informa o nome : grupo, se a mensagem for para um grupo
      * </pre>
      *
      * <code>optional string grupo = 4;</code>
@@ -355,7 +355,7 @@ public final class MensagemProto {
     }
     /**
      * <pre>
-     * Informa o nome do grupo, se a mensagem for para um grupo
+     * Informa o nome : grupo, se a mensagem for para um grupo
      * </pre>
      *
      * <code>optional string grupo = 4;</code>
@@ -1015,7 +1015,7 @@ public final class MensagemProto {
       private java.lang.Object grupo_ = "";
       /**
        * <pre>
-       * Informa o nome do grupo, se a mensagem for para um grupo
+       * Informa o nome : grupo, se a mensagem for para um grupo
        * </pre>
        *
        * <code>optional string grupo = 4;</code>
@@ -1034,7 +1034,7 @@ public final class MensagemProto {
       }
       /**
        * <pre>
-       * Informa o nome do grupo, se a mensagem for para um grupo
+       * Informa o nome : grupo, se a mensagem for para um grupo
        * </pre>
        *
        * <code>optional string grupo = 4;</code>
@@ -1054,7 +1054,7 @@ public final class MensagemProto {
       }
       /**
        * <pre>
-       * Informa o nome do grupo, se a mensagem for para um grupo
+       * Informa o nome : grupo, se a mensagem for para um grupo
        * </pre>
        *
        * <code>optional string grupo = 4;</code>
@@ -1071,7 +1071,7 @@ public final class MensagemProto {
       }
       /**
        * <pre>
-       * Informa o nome do grupo, se a mensagem for para um grupo
+       * Informa o nome : grupo, se a mensagem for para um grupo
        * </pre>
        *
        * <code>optional string grupo = 4;</code>
@@ -1084,7 +1084,7 @@ public final class MensagemProto {
       }
       /**
        * <pre>
-       * Informa o nome do grupo, se a mensagem for para um grupo
+       * Informa o nome : grupo, se a mensagem for para um grupo
        * </pre>
        *
        * <code>optional string grupo = 4;</code>

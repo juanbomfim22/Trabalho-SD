@@ -32,7 +32,7 @@ public class Main {
 		String user = scanner.nextLine().trim();
 //		currentQueue = sender; // Descomentar para que o usuário receba mensagens dele mesmo
 		chat = new Chat(user);
-		chat.channelSetup();
+		chat.channelSetup(user);
 		chat.waitMessage();
 		System.out.print(currentArrow);
 	}
